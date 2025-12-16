@@ -1,0 +1,198 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/typography";
+
+/* ===========================
+   Brand Tokens
+   =========================== */
+:root {
+  /* Brand colors */
+  --color-brand-primary: #950078;   /* logo purple */
+  --color-brand-secondary: #ffffff; /* white */
+  --color-brand-black: #0a0a0a;     /* text */
+  --color-brand-gray: #6b7280;      /* muted */
+
+  /* Functional colors */
+  --color-success: #16a34a; /* green-600 */
+  --color-error: #dc2626;   /* red-600 */
+  --color-warning: #facc15; /* yellow-400 */
+  --color-info: #2563eb;    /* blue-600 */
+
+  /* Spacing tokens */
+  --space-xs: 0.25rem;   /* 4px */
+  --space-sm: 0.5rem;    /* 8px */
+  --space-md: 1rem;      /* 16px */
+  --space-lg: 2rem;      /* 32px */
+  --space-xl: 4rem;      /* 64px */
+
+  /* Radius + Font */
+  --radius-brand: 0.5rem;
+  --font-brand: "Inter", sans-serif;
+}
+
+
+
+/* ===========================
+   Utilities
+   =========================== */
+@utility container {
+  padding: 1rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@utility font-brand {
+  font-family: var(--font-brand);
+}
+
+@utility text-muted {
+  color: var(--color-brand-gray);
+}
+
+/* ===========================
+   Components
+   =========================== */
+@layer components {
+  .text-brand-primary { color: var(--color-brand-primary); }
+  .text-brand-black { color: var(--color-brand-black); }
+
+  /* Buttons */
+  .btn {
+    @apply font-bold py-2 px-4 rounded;
+    font-family: var(--font-brand);
+  }
+
+  .btn-primary {
+    background-color: var(--color-brand-primary);
+    color: var(--color-brand-secondary);
+    @apply hover:opacity-90;
+  }
+
+  .btn-success {
+    background-color: var(--color-success);
+    color: var(--color-brand-secondary);
+    @apply hover:opacity-90;
+  }
+
+  .btn-error {
+    background-color: var(--color-error);
+    color: var(--color-brand-secondary);
+    @apply hover:opacity-90;
+  }
+
+  .btn-warning {
+    background-color: var(--color-warning);
+    color: var(--color-brand-black);
+    @apply hover:opacity-90;
+  }
+
+  .btn-info {
+    background-color: var(--color-info);
+    color: var(--color-brand-secondary);
+    @apply hover:opacity-90;
+  }
+
+  /* Cards */
+  .card {
+    background-color: var(--color-brand-secondary);
+    color: var(--color-brand-black);
+    @apply shadow-md p-6 rounded;
+  }
+
+  /* Tags */
+  .tag {
+    background-color: var(--color-brand-primary);
+    @apply text-white px-2 py-1 text-sm rounded;
+  }
+
+  /* Text Roles */
+  .text-lead {
+    font-size: 1.25rem; /* 20px */
+    font-weight: 500;
+    color: var(--color-brand-black);
+  }
+
+  .text-caption {
+    font-size: 0.875rem; /* 14px */
+    color: var(--color-brand-gray);
+    font-style: italic;
+  }
+
+  .text-label {
+    font-size: 0.75rem; /* 12px */
+    text-transform: uppercase;
+    color: var(--color-brand-black);
+    letter-spacing: 0.05em;
+  }
+
+  /* Alerts */
+  .alert {
+    @apply p-4 rounded font-brand mb-4;
+  }
+
+  .alert-success {
+    background-color: var(--color-success);
+    color: var(--color-brand-secondary);
+  }
+
+  .alert-error {
+    background-color: var(--color-error);
+    color: var(--color-brand-secondary);
+  }
+
+  .alert-warning {
+    background-color: var(--color-warning);
+    color: var(--color-brand-black);
+  }
+
+  .alert-info {
+    background-color: var(--color-info);
+    color: var(--color-brand-secondary);
+  }
+
+  /* Forms */
+  .form-label {
+    @apply block mb-2 font-bold;
+    color: var(--color-brand-black);
+    font-family: var(--font-brand);
+  }
+
+  .form-helper {
+    @apply text-sm italic;
+    color: var(--color-brand-gray);
+  }
+
+  .form-error {
+    @apply text-sm;
+    color: var(--color-error);
+  }
+
+  .form-success {
+    @apply text-sm;
+    color: var(--color-success);
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    @apply w-full px-3 py-2 rounded border;
+    border-color: var(--color-brand-gray);
+    background-color: var(--color-brand-secondary);
+    color: var(--color-brand-black);
+    font-family: var(--font-brand);
+  }
+
+  .form-textarea {
+    resize: vertical;
+  }
+
+  /* Focus states with brand purple glow */
+  .form-input:focus,
+  .form-select:focus,
+  .form-textarea:focus {
+    outline: none;
+    border-color: var(--color-brand-primary);
+    box-shadow: 0 0 0 2px #b83294; /* lighter purple glow */
+  }
+}
