@@ -1,46 +1,73 @@
 <script lang="ts">
-  export let form;
+  import { fail } from '@sveltejs/kit';
+  import loginImage from '$lib/assets/SOHMC-about.png';
+
+  export let form; // Props passed from server action (contains error message if login fails)
 </script>
 
-<section class="container max-w-md mx-auto mt-lg card">
-  <h1 class="heading text-brand-primary mb-md">Login to SOHMC</h1>
-
-  <form method="post" class="space-y-md">
-    <!-- Email -->
-    <div>
-      <label for="email" class="form-label">Email</label>
-      <input
-        id="email"
-        name="email"
-        type="email"
-        class="form-input"
-        required
-      />
+<section class="min-h-screen flex items-center justify-center bg-gray-100 font-brand px-(--space-lg) py-(--space-xl)">
+  <!-- Login Card -->
+  <div class="w-full max-w-md bg-white rounded-xl shadow-lg p-(--space-lg)">
+    <!-- Logo + Title -->
+    <div class="flex flex-col items-center mb-(--space-lg)">
+      <img src={loginImage} alt="SOHMC Logo" class="h-18 w-auto mb-(--space-md)" />
+      <h1 class="text-2xl font-bold text-(--color-brand-primary)">Login</h1>
+      <p class="text-sm text-gray-600 mt-1">To access your dashboard and Profile</p>
     </div>
 
-    <!-- Password -->
-    <div>
-      <label for="password" class="form-label">Password</label>
-      <input
-        id="password"
-        name="password"
-        type="password"
-        class="form-input"
-        required
-      />
-    </div>
-
-    <!-- Error handling -->
+    <!-- Error Message -->
     {#if form?.error}
-      <p class="form-error">{form.error}</p>
+      <div class="bg-red-100 text-red-700 p-3 rounded mb-(--space-md) text-sm text-center">
+        {form.error}
+      </div>
     {/if}
 
-    <!-- Submit -->
-    <button type="submit" class="btn btn-primary w-full">Login</button>
-  </form>
+    <!-- Login Form -->
+    <form method="post" class="space-y-(--space-md)">
+      <!-- Email -->
+      <div>
+        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          required
+          class="w-full rounded-md border-gray-300 focus:border-(--color-brand-primary) focus:ring-(--color-brand-primary) px-3 py-2"
+          placeholder="you@example.com"
+        />
+      </div>
 
-  <p class="text-caption mt-md text-center">
-    Don’t have an account?
-    <a href="/auth/signup" class="text-brand-primary hover:underline">Sign up</a>
-  </p>
+      <!-- Password -->
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          required
+          class="w-full rounded-md border-gray-300 focus:border-(--color-brand-primary) focus:ring-(--color-brand-primary) px-3 py-2"
+          placeholder="••••••••"
+        />
+      </div>
+
+      <!-- Submit -->
+      <button
+        type="submit"
+        class="w-full bg-(--color-brand-primary) text-(--color-brand-secondary) font-semibold py-2 px-4 rounded-md hover:opacity-90 transition"
+      >
+        Login
+      </button>
+    </form>
+
+    <!-- Footer Links -->
+    <div class="mt-(--space-md) text-center text-sm text-gray-600">
+      <p>
+        Don’t have an account?
+        <a href="/auth/signup" class="text-(--color-brand-primary) hover:underline">Sign Up</a>
+      </p>
+      <p class="mt-1">
+        <a href="/auth/reset-password" class="text-(--color-brand-primary) hover:underline">Forgot Password?</a>
+      </p>
+    </div>
+  </div>
 </section>

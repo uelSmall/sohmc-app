@@ -1,4 +1,3 @@
-// tailwind.config.js
 export default {
   content: ["./src/**/*.{html,js,svelte,ts}"],
   theme: {
@@ -19,7 +18,7 @@ export default {
     }
   },
   plugins: [
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/typography')
+    "@tailwindcss/forms",
+    "@tailwindcss/typography"
   ]
 };

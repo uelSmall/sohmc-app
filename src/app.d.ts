@@ -1,10 +1,11 @@
-import type { SupabaseClient, Session } from '@supabase/supabase-js';
+import type { SupabaseClient, Session, User } from '@supabase/supabase-js';
 
 declare global {
   namespace App {
     // What you attach in hooks.server.ts
     interface Locals {
       supabase: SupabaseClient;
+      session: Session | null;
       user: User |null;
     }
 

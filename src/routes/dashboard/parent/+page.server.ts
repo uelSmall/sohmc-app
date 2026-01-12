@@ -1,27 +1,21 @@
-// src/routes/dashboard/parent/+page.server.ts
 import { redirect } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ locals }) => {
-  const {
-    data: { session }
-  } = await locals.supabase.auth.getSession();
+export const load = async ({ locals }) => {
+  const { data: { user } } = await locals.supabase.auth.getUser();
 
-  if (!session) {
+  if (!user) {
     throw redirect(303, '/auth/login');
   }
 
   const { data: profile } = await locals.supabase
-    .from('users')
+    .from('profiles')
     .select('role')
-    .eq('user_id', session.user.id)
+    .eq('id', user.id)
     .single();
 
   if (profile?.role !== 'parent') {
-    throw redirect(303, '/dashboard');
+    throw redirect(303, `/dashboard/${profile?.role}`);
   }
 
-  return { session,
-    user: session.user,
-    role: profile.role };
+  return { user, role: profile.role };
 };

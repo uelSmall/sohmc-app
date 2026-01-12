@@ -1,28 +1,31 @@
-// src/routes/dashboard/+layout.server.ts
 import { redirect } from '@sveltejs/kit';
-import type { LayoutServerLoad } from './$types';
 
-export const load: LayoutServerLoad = async ({ locals }) => {
-  // Get current session
-  const {
-    data: { session }
-  } = await locals.supabase.auth.getSession();
+export const load = async ({ locals }) => {
+  // 1. Get the current authenticated user from Supabase
+  const { data: { user }, error: authError } = await locals.supabase.auth.getUser();
 
-  if (!session) {
+  // If no user or an error occurred, redirect to login
+  if (authError || !user) {
+    console.error('Auth error:', authError?.message);
     throw redirect(303, '/auth/login');
   }
 
-  // Fetch role from users table
-  const { data: profile, error } = await locals.supabase
-    .from('users')
+  // 2. Fetch the user's role from the profiles table
+  const { data: profile, error: profileError } = await locals.supabase
+    .from('profiles')
     .select('role')
-    .eq('user_id', session.user.id)
+    .eq('id', user.id)
     .single();
 
-  if (error || !profile?.role) {
-    throw redirect(303, '/auth/login');
+  // If no role is found, redirect to choose-role page
+  if (profileError || !profile) {
+    console.error('Profile fetch failed:', profileError?.message);
+    throw redirect(303, '/auth/choose-role');
   }
 
-  // Pass session + role down to child pages
-  return { session, role: profile.role };
+  // 3. Return user + role to be consumed by dashboard layout
+  return {
+    user: { email: user.email }, // only expose email, not full user object
+    role: profile.role           // student or teacher
+  };
 };

@@ -1,33 +1,59 @@
 <script lang="ts">
-  export let data: {
-    user: { email: string } | null;
-    profile: { role: string | null; avatar_url: string | null } | null;
+  import { enhance } from '$app/forms';
+
+  // Define the expected form shape
+  type ProfileForm = {
+    error?: string;
+    success?: boolean;
   };
+
+  export let form: ProfileForm;
+  export let data: { profile: { full_name: string; avatar_url: string } | null };
 </script>
 
-<section class="container max-w-md mx-auto mt-lg card">
-  <h1 class="heading text-brand-primary mb-md">Your Profile</h1>
+<div class="flex min-h-screen items-center justify-center bg-gray-50">
+  <form
+    method="post"
+    use:enhance
+    class="w-full max-w-md space-y-6 rounded-lg bg-white p-8 shadow-md"
+  >
+    <h1 class="text-xl font-semibold text-gray-900">Edit Profile</h1>
 
-  {#if data.user && data.profile}
-    <div class="flex flex-col items-center space-y-md">
-      <!-- Avatar -->
-      <img
-        src={data.profile.avatar_url}
-        alt="User avatar"
-        class="w-24 h-24 rounded-full border-2 border-brand-primary"
+    <div>
+      <label for="full_name" class="block text-sm font-medium text-gray-700">Full Name</label>
+      <input
+        id="full_name"
+        name="full_name"
+        type="text"
+        value={data.profile?.full_name ?? ''}
+        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
       />
-
-      <!-- Email -->
-      <p class="text-body font-semibold">
-        Email: <span class="text-brand-black">{data.user.email}</span>
-      </p>
-
-      <!-- Role -->
-      <p class="text-body">
-        Role: <span class="capitalize text-brand-secondary">{data.profile.role ?? 'Not set'}</span>
-      </p>
     </div>
-  {:else}
-    <p class="form-error">Profile not found.</p>
-  {/if}
-</section>
+
+    <div>
+      <label for="avatar_url" class="block text-sm font-medium text-gray-700">Avatar URL</label>
+      <input
+        id="avatar_url"
+        name="avatar_url"
+        type="url"
+        value={data.profile?.avatar_url ?? ''}
+        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+      />
+    </div>
+
+    {#if form?.error}
+      <p class="text-sm text-red-600">{form.error}</p>
+    {/if}
+
+    {#if form?.success}
+      <p class="text-sm text-green-600">Profile updated successfully!</p>
+    {/if}
+
+    <button
+      type="submit"
+      class="w-full rounded-md bg-indigo-600 py-2 px-4 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    >
+      Save Changes
+    </button>
+  </form>
+</div>

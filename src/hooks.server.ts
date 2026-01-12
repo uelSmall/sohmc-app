@@ -19,22 +19,23 @@ export const handle: Handle = async ({ event, resolve }) => {
             domain: c.options?.domain
           });
         }
-      }
+      } 
     }
   });
 
-  // Attach supabase to event.locals for use in loads/actions
+  // Attach supabase client to locals for use in loads/actions
   event.locals.supabase = supabase;
 
-// Get the session from Supabase
+  // Get the current session from Supabase
   const {
     data: { session },
     error
   } = await supabase.auth.getSession();
-  
-  // Attach user to locals
+
+  // Attach both session and user to locals
+  event.locals.session = session ?? null;
   event.locals.user = session?.user ?? null;
 
-  //Continue processing the request
+  // Continue processing the request
   return resolve(event);
 };

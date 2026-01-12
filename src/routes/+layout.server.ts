@@ -1,42 +1,25 @@
 // src/routes/+layout.server.ts
-import type { LayoutServerLoad } from './$types';
+export const load = async ({ locals }) => {
+  // Ask Supabase for the current user
+  const { data: { user } } = await locals.supabase.auth.getUser();
 
-export const load: LayoutServerLoad = async ({ locals }) => {
-  const { data: { user }, error } = await locals.supabase.auth.getUser();
-
-  // If no session, don't treat it as a fatal error
-  if (error?.message === 'Auth session missing!') {
+  // If no user, return nulls
+  if (!user) {
     return {
       user: null,
-      session: null,
       role: null
     };
   }
 
-  if (error) {
-    console.error('Auth error:', error.message);
-    return {
-      user: null,
-      session: null,
-      role: null
-    };
-  }
-
-  let role: "student" | "teacher" | "parent" | "admin" | null = null;
-
-  if (user) {
-    const { data: profile } = await locals.supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
-
-    role = profile?.role as typeof role;
-  }
+  // If user exists, fetch their role from profiles table
+  const { data: profile } = await locals.supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
 
   return {
-    user: user ?? null,
-    session: null, // keep this for type compatibility
-    role
+    user,
+    role: profile?.role ?? null
   };
 };

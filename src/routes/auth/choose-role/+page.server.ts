@@ -1,40 +1,71 @@
-import { fail, redirect } from '@sveltejs/kit';
-import type { Actions } from './$types';
+// src/routes/auth/choose-role/+page.server.ts
+import { redirect } from '@sveltejs/kit';
 
-export const actions: Actions = {
-  default: async ({ request, locals }) => {
-    if (!locals.user) {
-      return fail(401, { error: 'Not authenticated' });
-    }
+export const actions = {
+  // Handles "Student" form submission
+  student: async ({ locals }) => {
+    const { data: { user } } = await locals.supabase.auth.getUser();
+    if (!user) throw redirect(303, '/auth/login');
 
-    const formData = await request.formData();
-    const role = String(formData.get('role'));
-
-    // ✅ Validate against enum
-    if (!['student', 'teacher', 'parent'].includes(role)) {
-      return fail(400, { error: 'Invalid role selected' });
-    }
-
-    // ✅ Update profile role (overwrites default)
-    const { error } = await locals.supabase
+    // Attempt to update role
+    const { data, error } = await locals.supabase
       .from('profiles')
-      .update({ role })
-      .eq('id', locals.user.id);
+      .update({ role: 'student' })
+      .eq('id', user.id)
+      .select(); // return updated row for logging
+
+    // Log result for debugging
+    console.log('Student role update result:', { data, error });
 
     if (error) {
-      return fail(500, { error: error.message });
+      console.error('Failed to update role:', error.message);
+      throw redirect(303, '/auth/choose-role'); // fallback if update fails
     }
 
-    // ✅ Redirect to role dashboard
-    switch (role) {
-      case 'teacher':
-        throw redirect(303, '/dashboard/teacher');
-      case 'student':
-        throw redirect(303, '/dashboard/student');
-      case 'parent':
-        throw redirect(303, '/dashboard/parent');
-      default:
-        throw redirect(303, '/dashboard');
+    throw redirect(303, '/dashboard/student');
+  },
+
+  // Handles "Teacher" form submission
+  teacher: async ({ locals }) => {
+    const { data: { user } } = await locals.supabase.auth.getUser();
+    if (!user) throw redirect(303, '/auth/login');
+
+    const { data, error } = await locals.supabase
+      .from('profiles')
+      .update({ role: 'teacher' })
+      .eq('id', user.id)
+      .select();
+
+    // Log result for debugging
+    console.log('Teacher role update result:', { data, error });
+
+    if (error) {
+      console.error('Failed to update role:', error.message);
+      throw redirect(303, '/auth/choose-role');
     }
+
+    throw redirect(303, '/dashboard/teacher');
+  },
+
+  // Handles "Parent" form submission
+  parent: async ({ locals }) => {
+    const { data: { user } } = await locals.supabase.auth.getUser();
+    if (!user) throw redirect(303, '/auth/login');
+
+    const { data, error } = await locals.supabase
+      .from('profiles')
+      .update({ role: 'parent' })
+      .eq('id', user.id)
+      .select();
+
+    // Log result for debugging
+    console.log('Parent role update result:', { data, error });
+
+    if (error) {
+      console.error('Failed to update role:', error.message);
+      throw redirect(303, '/auth/choose-role');
+    }
+
+    throw redirect(303, '/dashboard/parent');
   }
 };

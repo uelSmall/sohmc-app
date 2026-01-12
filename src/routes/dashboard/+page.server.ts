@@ -2,27 +2,24 @@
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
+// This loader runs when a user visits /dashboard directly.
+// It checks their role and redirects them to the correct sub-dashboard.
 export const load: PageServerLoad = async ({ locals }) => {
-  const {
-    data: { session }
-  } = await locals.supabase.auth.getSession();
+  // 1. Get authenticated user
+  const { data: { user } } = await locals.supabase.auth.getUser();
+  if (!user) throw redirect(303, '/auth/login');
 
-  if (!session) {
-    throw redirect(303, '/auth/login');
-  }
-
-  // Fetch role from users table
-  const { data: profile, error } = await locals.supabase
-    .from('users')
+  // 2. Fetch role from profiles table
+  const { data: profile } = await locals.supabase
+    .from('profiles')
     .select('role')
-    .eq('user_id', session.user.id)
+    .eq('id', user.id)
     .single();
 
-  if (error || !profile?.role) {
-    throw redirect(303, '/auth/login');
-  }
+  // 3. If no role, redirect to login
+  if (!profile?.role) throw redirect(303, '/auth/login');
 
-  // Role-based redirect
+  // 4. Redirect based on role
   switch (profile.role) {
     case 'student':
       throw redirect(303, '/dashboard/student');

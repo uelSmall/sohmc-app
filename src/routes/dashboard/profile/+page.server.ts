@@ -1,24 +1,22 @@
-import type { PageServerLoad } from './$types';
+import { redirect } from '@sveltejs/kit';
 
-export const load: PageServerLoad = async ({ locals }) => {
-  if (!locals.user) {
-    return { user: null, profile: null };
+export const load = async ({ locals }) => {
+  const { data: { user } } = await locals.supabase.auth.getUser();
+
+  if (!user) {
+    throw redirect(303, '/auth/login');
   }
 
-  // ✅ Fetch profile info tied to auth.users.id
   const { data: profile, error } = await locals.supabase
     .from('profiles')
-    .select('email, role, avatar_url, created_at')
-    .eq('id', locals.user.id)
+    .select('full_name, avatar_url')
+    .eq('id', user.id)
     .single();
 
   if (error) {
-    console.error('Profile fetch error:', error.message);
-    return { user: locals.user, profile: null };
+    console.error("Profile load error:", error.message);
+    return { profile: null };
   }
 
-  return {
-    user: locals.user,   // comes from auth.users
-    profile              // comes from public.profiles
-  };
+  return { profile };
 };
