@@ -30,8 +30,8 @@
     <!-- Image -->
     <img
       src={images[current]}
-      alt="Gallery image"
-      class="w-full h-80 sm:h-[28rem] object-cover rounded-lg shadow-md transition-all duration-500"
+      alt=""
+      class="w-full h-80 sm:h-112 object-cover rounded-lg shadow-md transition-all duration-500"
     />
 
     <!-- Controls -->
@@ -52,12 +52,17 @@
   <!-- Thumbnails -->
   <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-(--space-md) mt-(--space-lg) max-w-4xl mx-auto">
     {#each images as img, i}
-      <img
-        src={img}
-        alt="Thumbnail"
-        class="cursor-pointer rounded-md shadow-md object-cover h-24 w-full border-2 {i === current ? 'border-(--color-brand-primary)' : 'border-transparent'}"
+      <button
+        type="button"
         on:click={() => (current = i)}
-      />
+        class="cursor-pointer rounded-md shadow-md overflow-hidden border-2 {i === current ? 'border-(--color-brand-primary)' : 'border-transparent'} transition hover:opacity-90"
+      >
+        <img
+          src={img}
+          alt="Thumbnail {i + 1}"
+          class="object-cover h-24 w-full"
+        />
+      </button>
     {/each}
   </div>
 </section>

@@ -1,7 +1,6 @@
 <script>
+  import { onMount } from 'svelte';
   import logo from "$lib/assets/SOHMC-logo.jpg"; // update path if needed
-
-
 
   let darkMode = false;
 
@@ -14,7 +13,9 @@
     }
   }
 
-
+  onMount(() => {
+    // DOM access is safe here (runs only in browser)
+  });
 </script>
 
 <div class="container space-y-8">
