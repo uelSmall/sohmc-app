@@ -20,6 +20,7 @@ export const load = async ({ locals }) => {
 
   return {
     user,
-    role: profile?.role ?? null
+    role: profile?.role ?? null,
+    session: locals.session
   };
 };

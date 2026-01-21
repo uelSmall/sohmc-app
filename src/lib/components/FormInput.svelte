@@ -19,10 +19,11 @@
     </label>
   {/if}
   <input
+    id={name}
     {type}
     {name}
     {placeholder}
-    {value}
+    bind:value
     {required}
     {disabled}
     on:input

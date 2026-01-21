@@ -8,6 +8,7 @@
 <button
   type={type}
   disabled={disabled}
+  on:click
   class={`
     font-brand font-semibold rounded transition-all
     ${size === 'sm' ? 'px-3 py-1 text-sm' : ''}

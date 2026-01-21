@@ -2,6 +2,7 @@
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '$env/static/private';
 import { createServerClient } from '@supabase/ssr';
 import type { Handle } from '@sveltejs/kit';
+import type { Session } from '@supabase/supabase-js';
 
 export const handle: Handle = async ({ event, resolve }) => {
   // Create a cookie‑aware Supabase client for SSR using the anon key
@@ -26,15 +27,28 @@ export const handle: Handle = async ({ event, resolve }) => {
   // Attach supabase client to locals for use in loads/actions
   event.locals.supabase = supabase;
 
-  // Get the current session from Supabase
+  // Get the current user from Supabase (more secure than getSession)
   const {
-    data: { session },
+    data: { user },
     error
-  } = await supabase.auth.getSession();
+  } = await supabase.auth.getUser();
+
+  // Reconstruct session object if user exists
+  let session: Session | null = null;
+  if (user) {
+    session = {
+      user,
+      expires_at: 0,
+      expires_in: 0,
+      refresh_token: '',
+      access_token: '',
+      token_type: 'bearer'
+    };
+  }
 
   // Attach both session and user to locals
-  event.locals.session = session ?? null;
-  event.locals.user = session?.user ?? null;
+  event.locals.session = session;
+  event.locals.user = user ?? null;
 
   // Continue processing the request
   return resolve(event);
