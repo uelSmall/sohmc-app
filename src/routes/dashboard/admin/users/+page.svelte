@@ -68,7 +68,7 @@
               <td>{user.role ?? '—'}</td>
               <td>
                 <form method="post" action="?/updateRole" use:enhance>
-                  <input type="hidden" name="user_id" value={user.user_id} />
+                  <input type="hidden" name="user_id" value={user.id} />
                   <select name="role" class="input">
                     <option value="student">Student</option>
                     <option value="teacher">Teacher</option>

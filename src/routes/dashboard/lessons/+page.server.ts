@@ -2,14 +2,14 @@ import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
-  const session = locals.session;
-  if (!session) throw redirect(302, '/auth/login');
+  const { data: { user } } = await locals.supabase.auth.getUser();
+  if (!user) throw redirect(302, '/auth/login');
 
   // fetch profile (may be null if not created yet)
   const { data: profile, error: profileError } = await locals.supabase
-    .from('users')
-    .select('instrument')
-    .eq('id', session.user.id)
+    .from('profiles')
+    .select('role, instrument')
+    .eq('id', user.id)
     .maybeSingle();
 
   if (profileError) {
@@ -30,7 +30,9 @@ export const load: PageServerLoad = async ({ locals }) => {
   }
 
   return {
-    session,
+    session: locals.session,
+    role: profile?.role ?? null,
+    user,
     profile: { instrument },
     lessons: lessons ?? []
   };

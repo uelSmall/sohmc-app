@@ -4,16 +4,14 @@ import type { Actions, PageServerLoad } from './$types';
 const allowedRoles = ['student', 'teacher', 'parent']; // ✅ no admin here
 
 export const load: PageServerLoad = async ({ locals }) => {
-  const {
-    data: { session }
-  } = await locals.supabase.auth.getSession();
+  const { data: { user } } = await locals.supabase.auth.getUser();
 
-  if (!session) throw redirect(303, '/auth/login');
+  if (!user) throw redirect(303, '/auth/login');
 
   const { data: profile, error } = await locals.supabase
-    .from('users')
+    .from('profiles')
     .select('role')
-    .eq('user_id', session.user.id)
+    .eq('id', user.id)
     .single();
 
   if (error) throw fail(500, { error: error.message });
@@ -22,7 +20,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     throw redirect(303, '/dashboard');
   }
 
-  return {};
+  return { session: locals.session, role: profile?.role ?? null };
 };
 
 export const actions: Actions = {
@@ -34,16 +32,14 @@ export const actions: Actions = {
       return fail(400, { error: 'Invalid role selection' });
     }
 
-    const {
-      data: { session }
-    } = await locals.supabase.auth.getSession();
+    const { data: { user } } = await locals.supabase.auth.getUser();
 
-    if (!session) throw redirect(303, '/auth/login');
+    if (!user) throw redirect(303, '/auth/login');
 
     const { error } = await locals.supabase
-      .from('users')
+      .from('profiles')
       .update({ role })
-      .eq('user_id', session.user.id);
+      .eq('id', user.id);
 
     if (error) {
       return fail(500, { error: error.message });

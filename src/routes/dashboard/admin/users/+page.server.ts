@@ -10,9 +10,9 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 
   // ✅ Only allow admins
   const { data: profile } = await locals.supabase
-    .from('users')
+    .from('profiles')
     .select('role')
-    .eq('user_id', session.user.id)
+    .eq('id', session.user.id)
     .single();
 
   if (profile?.role !== 'admin') {
@@ -32,8 +32,8 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   const sortDir = url.searchParams.get('sortDir') ?? 'desc';
 
   let query = locals.supabase
-    .from('users')
-    .select('user_id, email, full_name, role', { count: 'exact' })
+    .from('profiles')
+    .select('id, email, full_name, role', { count: 'exact' })
     .order(sortBy, { ascending: sortDir === 'asc' })
     .range(offset, offset + limit - 1);
 
@@ -45,6 +45,6 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 
   if (error) throw fail(500, { error: error.message });
 
- return { users, count: count ?? 0, page, limit, search, sortBy, sortDir };
+ return { session: null, role: profile?.role ?? null, users, count: count ?? 0, page, limit, search, sortBy, sortDir };
 
 };

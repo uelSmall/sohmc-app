@@ -9,7 +9,7 @@
 {:else}
   <ul>
     {#each data.users as u}
-      <li>{u.name} — {u.role}</li>
+      <li>{u.full_name} — {u.role}</li>
     {/each}
   </ul>
 {/if}

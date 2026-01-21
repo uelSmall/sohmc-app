@@ -7,8 +7,8 @@ export async function load({ locals }) {
 
   // Simple query: grab first 5 users
   const { data, error } = await supabase
-    .from('users')
-    .select('id, name, role')
+    .from('profiles')
+    .select('id, full_name, role')
     .limit(5);
 
   return {

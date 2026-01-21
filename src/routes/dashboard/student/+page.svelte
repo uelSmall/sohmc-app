@@ -131,7 +131,7 @@
   <div class="alert alert-info">ℹ️ Info Alert</div>
 
   <!-- Form Test -->
-  <label class="form-label">Email</label>
-  <input type="email" class="form-input" placeholder="you@example.com" />
+  <label for="email" class="form-label">Email</label>
+  <input id="email" type="email" class="form-input" placeholder="you@example.com" />
   <p class="form-helper">We’ll never share your email.</p>
 </section>

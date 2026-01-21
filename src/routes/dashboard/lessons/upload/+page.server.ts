@@ -4,17 +4,17 @@ import type { Actions } from './$types';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
-  const session = locals.session;
-  if (!session) throw redirect(302, '/auth/login');
+  const { data: { user } } = await locals.supabase.auth.getUser();
+  if (!user) throw redirect(302, '/auth/login');
 
   const { data: profile } = await locals.supabase
-    .from('users')
+    .from('profiles')
     .select('role,instrument')
-    .eq('id', session.user.id)
+    .eq('id', user.id)
     .single();
 
   // return profile even if null so PageData includes it
-  return { session, profile: profile ?? null };
+  return { session: locals.session, role: profile?.role ?? null, user, profile: profile ?? null };
 };
 
 export const actions: Actions = {
